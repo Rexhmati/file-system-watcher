@@ -7,6 +7,7 @@ use App\Events\FsWatch\FileDeleted;
 use App\Events\FsWatch\FileModified;
 use App\Models\FileSnapshot;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class WatchFileSystem extends Command
 {
@@ -45,9 +46,9 @@ class WatchFileSystem extends Command
      */
     public function handle(): void
     {
-        $this->info("Starting file system watcher...");
-
+        Log::channel('fswatcher')->info('--------------------- Starting file system watcher ---------------------');
         $this->scan();
+        Log::channel('fswatcher')->info('--------------------- File system watcher finished ---------------------' . PHP_EOL);
     }
 
     public function scan(): void
@@ -58,7 +59,7 @@ class WatchFileSystem extends Command
                 throw new \Exception('Directory does not exist: ' . $this->watchDir);
             }
 
-            $this->info("Scanning directory: {$this->watchDir}");
+            Log::channel('fswatcher')->info("Scanning directory: {$this->watchDir}");
 
             // Get current files in the directory
             $currentMap = collect(scandir($this->watchDir))
@@ -71,16 +72,16 @@ class WatchFileSystem extends Command
             // Get existing snapshots from the database
             $snapshots = FileSnapshot::all()->keyBy('path');
 
-            $this->info("Found " . $currentMap->count() . " files in the directory.");
+            Log::channel('fswatcher')->info("Found " . $currentMap->count() . " files in the directory.");
             foreach ($snapshots as $path => $snapshot) {
                 if (!isset($currentMap[$path])) {
                     event(new FileDeleted($path));
                     $snapshot->delete();
-                    $this->warn("Deleted: $path");
+                    Log::channel('fswatcher')->info("Deleted: $path");
                 } elseif ($snapshot->last_modified !== $currentMap[$path]) {
                     $snapshot->update(['last_modified' => $currentMap[$path]]);
                     event(new FileModified($path));
-                    $this->info("Modified: $path");
+                    Log::channel('fswatcher')->info("Modified: $path");
                 }
 
                 $currentMap->forget($path);
@@ -92,13 +93,12 @@ class WatchFileSystem extends Command
                     'last_modified' => $mtime,
                 ]);
                 event(new FileCreated($path));
-                $this->info("Created: $path");
+                Log::channel('fswatcher')->info("Created: $path");
             }
 
         } catch (\Exception $e) {
-            $this->error("Error scanning directory: {$e->getMessage()}");
+            Log::channel('fswatcher')->error("Error scanning directory: {$e->getMessage()}");
             return;
         }
-
     }
 }

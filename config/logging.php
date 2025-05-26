@@ -127,6 +127,11 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        'fswatcher' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/fswatcher.log'),
+            'level' => 'debug',
+        ],
     ],
 
 ];
