@@ -31,7 +31,7 @@ class HandleCreatedFile implements ShouldQueue
     {
         try {
             $path = $event->filePath;
-            Log::channel('fswatcher')->info("HandleCreatedFile: $path");
+            Log::channel('fswatcher')->info("------------------------------ HandleCreatedFile: $path ------------------------------");
 
             $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
             if (!$ext) {

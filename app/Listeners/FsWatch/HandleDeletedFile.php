@@ -28,7 +28,7 @@ class HandleDeletedFile implements ShouldQueue
         try {
             $path = $event->filePath;
 
-            Log::channel('fswatcher')->info("HandleDeletedFile: $path");
+            Log::channel('fswatcher')->info("------------------------------ HandleDeletedFile: $path ------------------------------");
 
             $response = Http::timeout(5)->get($this->memeApiEndpoint);
 
