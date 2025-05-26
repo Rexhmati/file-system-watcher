@@ -50,14 +50,14 @@ FSWATCHER_MEME_API="https://meme-api.com/gimme"
 
 
 
-### Challenges Encountered
+## Challenges Encountered
 - Tracking file changes persistently across executions
 - Avoiding unnecessary scans or reprocessing
 - Cleanly handling multiple file types with different behaviors
 - Keeping logic extensible without bloating a single class
 - Ensuring safe and concurrent processing (especially for queued jobs)
 
-### Approaches Considered
+## Approaches Considered
 1. Caching vs. Database
    - Considered using Laravel's cache (e.g. Redis, file) to store file states.
    - Rejected because cache is volatile, can be cleared, and doesn’t support durable querying or long-term persistence.
