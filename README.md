@@ -36,6 +36,10 @@ FSWATCHER_BACON_API="https://baconipsum.com/api/?type=meat-and-filler"
 FSWATCHER_MEME_API="https://meme-api.com/gimme"
 ```
 
+> cp .env.example .env
+
+> php artisan key:generate
+
 > composer install
 
 > php artisan migrate
